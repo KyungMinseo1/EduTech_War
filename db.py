@@ -11,6 +11,12 @@ def init_connection():
     except Exception as e:
         st.error(f"연결 실패: {e}")
         return None
+    
+def get_connection():
+    conn = init_connection()
+    if conn.closed:
+        conn = psycopg2.connect(**st.secrets["postgres"])
+    return conn
 
 # 테이블 생성용 함수
 def init_tables(conn):

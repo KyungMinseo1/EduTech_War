@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from prompt import generate_diary
-from db import init_connection, init_tables
+from db import get_connection, init_tables
 
 conn = init_connection()
 if conn is not None:

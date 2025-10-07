@@ -3,9 +3,9 @@ from PIL import Image
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from db import init_connection, init_tables
+from db import get_connection, init_tables
 
-conn = init_connection()
+conn = get_connection()
 if conn is not None:
     init_tables(conn)
 
