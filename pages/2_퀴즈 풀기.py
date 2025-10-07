@@ -187,7 +187,7 @@ if st.session_state.get('username'):
             st.error(f"문제 {i}: 오답 ❌ (정답은 {correct}번)")
         else:
           st.warning(f"문제 {i}: 답을 선택하지 않았습니다")
-      q1, q2, q3 = [x == y for x, y in zip(questions, answers)]
+      q1, q2, q3 = [int(x.split(".")[0]) == y for x, y in zip(questions, answers)]
       print("DEBUG:", q1, q2, q3)
       try:
         with conn.cursor() as cur:
@@ -222,7 +222,7 @@ if st.session_state.get('username'):
             st.error(f"문제 {i}: 오답 ❌ (정답은 {correct}번)")
         else:
           st.warning(f"문제 {i}: 답을 선택하지 않았습니다")
-      q4, q5, q6 = [x == y for x, y in zip(questions, answers)]
+      q4, q5, q6 = [int(x.split(".")[0]) == y for x, y in zip(questions, answers)]
       try:
         with conn.cursor() as cur:
           cur.execute(
@@ -256,7 +256,7 @@ if st.session_state.get('username'):
             st.error(f"문제 {i}: 오답 ❌ (정답은 {correct}번)")
         else:
           st.warning(f"문제 {i}: 답을 선택하지 않았습니다")
-      q7, q8, q9 = [x == y for x, y in zip(questions, answers)]
+      q7, q8, q9 = [int(x.split(".")[0]) == y for x, y in zip(questions, answers)]
       try:
         with conn.cursor() as cur:
           cur.execute(
