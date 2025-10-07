@@ -5,6 +5,10 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from db import init_connection, init_tables
 
+conn = init_connection()
+if conn is not None:
+    init_tables(conn)
+
 st.set_page_config(layout="wide")
 
 st.text_input("이름 입력", key="username")
@@ -17,9 +21,6 @@ if st.session_state.get('username'):
     if key not in st.session_state:
       st.session_state[key] = False
 
-  conn = init_connection()
-  if conn is not None:
-      init_tables(conn)
   user_name = st.session_state.get('username')
 
   st.title("전쟁기념관 데이트 프로그램")

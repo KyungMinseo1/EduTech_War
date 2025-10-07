@@ -5,14 +5,16 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from prompt import generate_diary
 from db import init_connection, init_tables
 
+conn = init_connection()
+if conn is not None:
+    init_tables(conn)
+
 st.set_page_config(layout="wide")
 
 st.text_input("이름 입력", key="username")
 
 if st.session_state.get('username'):
-  conn = init_connection()
-  if conn is not None:
-      init_tables(conn)
+
   user_name = st.session_state.get('username')
 
   for i in range(1, 4):
