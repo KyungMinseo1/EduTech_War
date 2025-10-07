@@ -6,14 +6,7 @@ import streamlit as st
 def init_connection():
     """Neon DB 연결"""
     try:
-        conn = psycopg2.connect(
-            host=st.secrets["postgres"]["host"],
-            port=st.secrets["postgres"]["port"],
-            database=st.secrets["postgres"]["database"],
-            user=st.secrets["postgres"]["user"],
-            password=st.secrets["postgres"]["password"],
-            sslmode=st.secrets["postgres"]["sslmode"]
-        )
+        conn = psycopg2.connect(**st.secrets["postgres"])
         return conn
     except Exception as e:
         st.error(f"연결 실패: {e}")
