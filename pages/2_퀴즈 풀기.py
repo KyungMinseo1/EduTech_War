@@ -188,6 +188,7 @@ if st.session_state.get('username'):
         else:
           st.warning(f"문제 {i}: 답을 선택하지 않았습니다")
       q1, q2, q3 = [x == y for x, y in zip(questions, answers)]
+      print("DEBUG:", q1, q2, q3)
       try:
         with conn.cursor() as cur:
           cur.execute(
