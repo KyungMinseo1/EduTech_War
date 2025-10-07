@@ -3,8 +3,18 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from prompt import generate_diary
+from db import init_connection, init_tables
+
+conn = init_connection()
+if conn is not None:
+    init_tables(conn)
 
 st.set_page_config(layout="wide")
+
+if not st.session_state.get('username'):
+  st.error("아직 등록이 되지 않은 사용자입니다. 홈페이지에서 사용자 등록을 먼저 해주세요!")
+else:
+  user_name = st.session_state.get('username')
 
 for i in range(1, 4):
   key = f"show_content_{i}"
@@ -106,7 +116,7 @@ if submitted:
   saved = False
 
   if st.session_state.get('show_content_1') and (diary_1 or keyword_text_1):
-    st.success("✅ 전쟁실Ⅰ 일기가 저장되었습니다. AI가 더 풍부하고 생생하게 감정을 담아 일기를 작성해주고 있어요!")
+    st.success("✅ 전쟁실Ⅰ 일기가 입력되었습니다. AI가 더 풍부하고 생생하게 감정을 담아 일기를 작성해주고 있어요!")
     if diary_1 and keyword_text_1:
       output_diary1 = generate_diary('전쟁실1', diary_1+' '+keyword_text_1)
     elif keyword_text_1:
@@ -116,7 +126,7 @@ if submitted:
     st.session_state['output_diary1'] = output_diary1
 
   if st.session_state.get('show_content_2') and (diary_2 or keyword_text_2):
-    st.success("✅ 전쟁실Ⅱ 일기가 저장되었습니다!")
+    st.success("✅ 전쟁실Ⅱ 일기가 입력되었습니다. AI가 더 풍부하고 생생하게 감정을 담아 일기를 작성해주고 있어요!")
     if diary_2 and keyword_text_2:
       output_diary2 = generate_diary('전쟁실1', diary_2+' '+keyword_text_2)
     elif keyword_text_2:
@@ -126,7 +136,7 @@ if submitted:
     st.session_state['output_diary2'] = output_diary2
 
   if st.session_state.get('show_content_3') and (diary_3 or keyword_text_3):
-    st.success("✅ 전쟁실Ⅲ 일기가 저장되었습니다!")
+    st.success("✅ 전쟁실Ⅲ 일기가 입력되었습니다. AI가 더 풍부하고 생생하게 감정을 담아 일기를 작성해주고 있어요!")
     if diary_3 and keyword_text_3:
       output_diary3 = generate_diary('전쟁실1', diary_3+' '+keyword_text_3)
     elif keyword_text_3:
@@ -149,6 +159,22 @@ if 'output_diary1' in st.session_state and st.session_state.get('show_content_1'
     with st.expander("저장된 일기 보기"):
       st.write(result1)
       st.success("성공적으로 저장되었습니다! 당신의 아름다운 기억을 소중히 간직해둘게요.")
+      try:
+        with conn.cursor() as cur:
+          cur.execute(
+            """
+            INSERT INTO diary (name, content1)
+            VALUES (%s, %s)
+            ON CONFLICT (name) DO UPDATE
+            SET content1 = EXCLUDED.content1,
+                created_at = NOW();
+            """, (user_name, result1)
+          )
+          conn.commit()
+        st.success("저장 완료!")
+        st.cache_data.clear()
+      except Exception as e:
+        st.error(f"저장 실패: {e}")
       
 if 'output_diary2' in st.session_state and st.session_state.get('show_content_2'):
   with st.form("save2"):  # 다른 이름!
@@ -164,6 +190,22 @@ if 'output_diary2' in st.session_state and st.session_state.get('show_content_2'
     with st.expander("저장된 일기 보기"):
       st.write(result2)
       st.success("성공적으로 저장되었습니다! 당신의 아름다운 기억을 소중히 간직해둘게요.")
+      try:
+        with conn.cursor() as cur:
+          cur.execute(
+            """
+            INSERT INTO diary (name, content2)
+            VALUES (%s, %s)
+            ON CONFLICT (name) DO UPDATE
+            SET content2 = EXCLUDED.content2,
+                created_at = NOW();
+            """, (user_name, result2)
+          )
+          conn.commit()
+        st.success("저장 완료!")
+        st.cache_data.clear()
+      except Exception as e:
+        st.error(f"저장 실패: {e}")
   
 if 'output_diary3' in st.session_state and st.session_state.get('show_content_3'):
   with st.form("save3"):  # 다른 이름!
@@ -179,3 +221,19 @@ if 'output_diary3' in st.session_state and st.session_state.get('show_content_3'
     with st.expander("저장된 일기 보기"):
       st.write(result3)
       st.success("성공적으로 저장되었습니다! 당신의 아름다운 기억을 소중히 간직해둘게요.")
+      try:
+        with conn.cursor() as cur:
+          cur.execute(
+            """
+            INSERT INTO diary (name, content3)
+            VALUES (%s, %s)
+            ON CONFLICT (name) DO UPDATE
+            SET content3 = EXCLUDED.content3,
+                created_at = NOW();
+            """, (user_name, result3)
+          )
+          conn.commit()
+        st.success("저장 완료!")
+        st.cache_data.clear()
+      except Exception as e:
+        st.error(f"저장 실패: {e}")

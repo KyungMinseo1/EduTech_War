@@ -1,5 +1,13 @@
 import streamlit as st
 from PIL import Image
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from db import init_connection, init_tables
+
+conn = init_connection()
+if conn is not None:
+    init_tables(conn)
 
 st.set_page_config(layout="wide")
 
@@ -9,6 +17,11 @@ for i in range(1, 4):
   key = f"show_content_{i}"
   if key not in st.session_state:
     st.session_state[key] = False
+
+if not st.session_state.get('username'):
+  st.error("아직 등록이 되지 않은 사용자입니다. 홈페이지에서 사용자 등록을 먼저 해주세요!")
+else:
+  user_name = st.session_state.get('username')
 
 st.title("전쟁기념관 데이트 프로그램")
 st.header("_:blue[퀴즈] 풀기_")
@@ -174,7 +187,26 @@ if submitted:
           st.error(f"문제 {i}: 오답 ❌ (정답은 {correct}번)")
       else:
         st.warning(f"문제 {i}: 답을 선택하지 않았습니다")
-  
+    q1, q2, q3 = [x == y for x, y in zip(questions, answers)]
+    try:
+      with conn.cursor() as cur:
+        cur.execute(
+          """
+          INSERT INTO quiz (name, q1, q2, q3)
+          VALUES (%s, %s, %s, %s)
+          ON CONFLICT (name) DO UPDATE
+          SET q1 = EXCLUDED.q1,
+              q2 = EXCLUDED.q2,
+              q3 = EXCLUDED.q3,
+              created_at = NOW();
+          """, (user_name, q1, q2, q3)
+        )
+        conn.commit()
+      st.success("저장 완료!")
+      st.cache_data.clear()
+    except Exception as e:
+      st.error(f"저장 실패: {e}")
+
   if st.session_state.get('show_content_2'):
     questions = [question4, question5, question6]
     answers = [3, 4, 1]
@@ -189,7 +221,26 @@ if submitted:
           st.error(f"문제 {i}: 오답 ❌ (정답은 {correct}번)")
       else:
         st.warning(f"문제 {i}: 답을 선택하지 않았습니다")
-  
+    q4, q5, q6 = [x == y for x, y in zip(questions, answers)]
+    try:
+      with conn.cursor() as cur:
+        cur.execute(
+          """
+          INSERT INTO quiz (name, q4, q5, q6)
+          VALUES (%s, %s, %s, %s)
+          ON CONFLICT (name) DO UPDATE
+          SET q4 = EXCLUDED.q4,
+              q5 = EXCLUDED.q5,
+              q6 = EXCLUDED.q6,
+              created_at = NOW();
+          """, (user_name, q4, q5, q6)
+        )
+        conn.commit()
+      st.success("저장 완료!")
+      st.cache_data.clear()
+    except Exception as e:
+      st.error(f"저장 실패: {e}")
+
   if st.session_state.get('show_content_3'):
     questions = [question7, question8, question9]
     answers = [3, 3, 3]
@@ -204,7 +255,26 @@ if submitted:
           st.error(f"문제 {i}: 오답 ❌ (정답은 {correct}번)")
       else:
         st.warning(f"문제 {i}: 답을 선택하지 않았습니다")
-  
+    q7, q8, q9 = [x == y for x, y in zip(questions, answers)]
+    try:
+      with conn.cursor() as cur:
+        cur.execute(
+          """
+          INSERT INTO quiz (name, q7, q8, q9)
+          VALUES (%s, %s, %s, %s)
+          ON CONFLICT (name) DO UPDATE
+          SET q7 = EXCLUDED.q7,
+              q8 = EXCLUDED.q8,
+              q9 = EXCLUDED.q9,
+              created_at = NOW();
+          """, (user_name, q7, q8, q9)
+        )
+        conn.commit()
+      st.success("저장 완료!")
+      st.cache_data.clear()
+    except Exception as e:
+      st.error(f"저장 실패: {e}")
+
   st.markdown(f"### 🏁 최종 점수: {score} / {total}")
 
 
