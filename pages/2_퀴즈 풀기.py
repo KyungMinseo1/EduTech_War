@@ -11,6 +11,11 @@ if conn is not None:
 
 st.set_page_config(layout="wide")
 
+st.title("전쟁기념관 데이트 프로그램")
+st.header("_:blue[퀴즈] 풀기_")
+st.write("준비됐나요? 자신있으면 도전해보세요! 👍")
+st.divider()
+
 st.text_input("이름 입력", key="username")
 
 if st.session_state.get('username'):
@@ -22,11 +27,6 @@ if st.session_state.get('username'):
       st.session_state[key] = False
 
   user_name = st.session_state.get('username')
-
-  st.title("전쟁기념관 데이트 프로그램")
-  st.header("_:blue[퀴즈] 풀기_")
-  st.write("준비됐나요? 자신있으면 도전해보세요! 👍")
-  st.divider()
 
   col1, col2, col3, col4 = st.columns(4)
 
