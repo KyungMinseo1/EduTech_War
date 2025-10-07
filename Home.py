@@ -4,9 +4,9 @@ st.set_page_config(layout="wide")
 
 st.title("전쟁기념관 데이트 프로그램")
 st.text_input("이름 입력", key="username")
-st.success(f"성공적으로 등록되었습니다. 어서오세요 {st.session_state.get('username', 'OO')}님!")
 
 if st.session_state.get('username'):
+  st.success(f"성공적으로 등록되었습니다. 어서오세요 {st.session_state.get('username', 'OO')}님!")
   st.header("_About_")
 
   col1, space, col2 = st.columns([1, 0.1, 1])
